@@ -2642,7 +2642,6 @@ phonon.tagManager = (function () {
   }
 
   function mount(pageName, fn, postData) {
-    console.log("Phonon Mount!! ", pageName);
     if(opts.riotEnabled) {
 
       opts.riot.compile(function() {
