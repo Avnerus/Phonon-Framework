@@ -1730,10 +1730,6 @@ phonon.event = (function ($) {
 
 phonon.tagManager = (function () {
 
-	if(typeof riot === 'undefined') {
-		return;
-	}
-
 	var tags = [];
 
 	var addTag = function(tag, name) {
@@ -1767,6 +1763,7 @@ phonon.tagManager = (function () {
 	};
 
 })();
+
 	// init
 	phonon.options = function(options) {
 		var useI18n = false;
@@ -1808,11 +1805,9 @@ phonon.tagManager = (function () {
 	*/
 	phonon.updateLocale = function(locale) {
 
-		var riotEnabled = (typeof riot !== 'undefined' ? true : false);
-
 		phonon.i18n().setPreference(locale).getAll(function(json) {
 
-			if(riotEnabled) {
+			if(opts.riotEnabled) {
 
 				var virtualDom = phonon.tagManager.getAll();
 				var i = virtualDom.length - 1;
@@ -1821,7 +1816,7 @@ phonon.tagManager = (function () {
 				}
 
 				// Global update
-				riot.update();
+				opts.riot.update();
 
 			} else {
 				phonon.i18n().bind();
@@ -2206,8 +2201,6 @@ phonon.tagManager = (function () {
   var forward = true;
   var safeLink = false;
 
-  var riotEnabled = (riot === undefined ? false : true);
-
   var opts = {
     defaultPage: null,
     defaultTemplateExtension: null,
@@ -2216,7 +2209,8 @@ phonon.tagManager = (function () {
     templateRootDirectory: '',
     useI18n: true,
     enableBrowserBackButton: false,
-    useHash: true
+    useHash: true,
+    riotEnabled: false
   };
 
   /**
@@ -2427,7 +2421,7 @@ phonon.tagManager = (function () {
 
   function callCreate(pageName) {
 
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       // Call the "create" event in VM
       phonon.tagManager.trigger(pageName, 'create');
     }
@@ -2462,7 +2456,7 @@ phonon.tagManager = (function () {
 
     window.setTimeout(function() {
 
-      if(riotEnabled) {
+      if(opts.riotEnabled) {
         // Call the "ready" event in VM
         phonon.tagManager.trigger(pageName, 'ready');
       }
@@ -2488,7 +2482,7 @@ phonon.tagManager = (function () {
   }
 
   function callTransitionEnd(pageName) {
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       phonon.tagManager.trigger(pageName, 'transitionend');
     }
 
@@ -2513,7 +2507,7 @@ phonon.tagManager = (function () {
 
   function callHiddenCallback(pageName) {
 
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       phonon.tagManager.trigger(pageName, 'hidden');
     }
 
@@ -2538,7 +2532,7 @@ phonon.tagManager = (function () {
 
   function callTabChanged(pageName, tabNumber) {
 
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       phonon.tagManager.trigger(pageName, 'tabchanged', tabNumber);
     }
 
@@ -2587,7 +2581,7 @@ phonon.tagManager = (function () {
 
     var api = {close: close};
 
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       phonon.tagManager.trigger(pageName, 'close', api);
     }
 
@@ -2610,7 +2604,7 @@ phonon.tagManager = (function () {
 
     if(typeof params === 'undefined') return;
 
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       phonon.tagManager.trigger(pageName, 'hashchanged', params);
     }
 
@@ -2640,23 +2634,23 @@ phonon.tagManager = (function () {
   }
 
   function mount(pageName, fn, postData) {
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
 
-      riot.compile(function() {
+      opts.riot.compile(function() {
 
         if(opts.useI18n) {
           phonon.i18n().getAll(function(json) {
-            phonon.tagManager.addTag(riot.mount(pageName, {i18n: json}), pageName);
+            phonon.tagManager.addTag(opts.riot.mount(pageName, {i18n: json}), pageName);
             fn();
           });
         } else {
-          phonon.tagManager.addTag(riot.mount(pageName, {i18n: null}), pageName);
+          phonon.tagManager.addTag(opts.riot.mount(pageName, {i18n: null}), pageName);
           fn();
         }
       });
     }
 
-    if(!riotEnabled) {
+    if(!opts.riotEnabled) {
 
       var page = getPageObject(pageName);
 
@@ -3110,7 +3104,7 @@ phonon.tagManager = (function () {
         hash = opts.hashPrefix + pageObject.name + '/' + pageParams;
       }
 
-      if(currentPageObject.async) {
+      if(!opts.useHash || currentPageObject.async) {
         callClose(currentPage, pageObject.name, hash);
       } else {
         if(window.location.hash.indexOf(hash) === -1 && opts.useHash) {

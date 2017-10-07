@@ -21,8 +21,6 @@
   var forward = true;
   var safeLink = false;
 
-  var riotEnabled = (riot === undefined ? false : true);
-
   var opts = {
     defaultPage: null,
     defaultTemplateExtension: null,
@@ -31,7 +29,8 @@
     templateRootDirectory: '',
     useI18n: true,
     enableBrowserBackButton: false,
-    useHash: true
+    useHash: true,
+    riotEnabled: false
   };
 
   /**
@@ -242,7 +241,7 @@
 
   function callCreate(pageName) {
 
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       // Call the "create" event in VM
       phonon.tagManager.trigger(pageName, 'create');
     }
@@ -277,7 +276,7 @@
 
     window.setTimeout(function() {
 
-      if(riotEnabled) {
+      if(opts.riotEnabled) {
         // Call the "ready" event in VM
         phonon.tagManager.trigger(pageName, 'ready');
       }
@@ -303,7 +302,7 @@
   }
 
   function callTransitionEnd(pageName) {
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       phonon.tagManager.trigger(pageName, 'transitionend');
     }
 
@@ -328,7 +327,7 @@
 
   function callHiddenCallback(pageName) {
 
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       phonon.tagManager.trigger(pageName, 'hidden');
     }
 
@@ -353,7 +352,7 @@
 
   function callTabChanged(pageName, tabNumber) {
 
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       phonon.tagManager.trigger(pageName, 'tabchanged', tabNumber);
     }
 
@@ -402,7 +401,7 @@
 
     var api = {close: close};
 
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       phonon.tagManager.trigger(pageName, 'close', api);
     }
 
@@ -425,7 +424,7 @@
 
     if(typeof params === 'undefined') return;
 
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
       phonon.tagManager.trigger(pageName, 'hashchanged', params);
     }
 
@@ -455,23 +454,23 @@
   }
 
   function mount(pageName, fn, postData) {
-    if(riotEnabled) {
+    if(opts.riotEnabled) {
 
-      riot.compile(function() {
+      opts.riot.compile(function() {
 
         if(opts.useI18n) {
           phonon.i18n().getAll(function(json) {
-            phonon.tagManager.addTag(riot.mount(pageName, {i18n: json}), pageName);
+            phonon.tagManager.addTag(opts.riot.mount(pageName, {i18n: json}), pageName);
             fn();
           });
         } else {
-          phonon.tagManager.addTag(riot.mount(pageName, {i18n: null}), pageName);
+          phonon.tagManager.addTag(opts.riot.mount(pageName, {i18n: null}), pageName);
           fn();
         }
       });
     }
 
-    if(!riotEnabled) {
+    if(!opts.riotEnabled) {
 
       var page = getPageObject(pageName);
 
@@ -925,7 +924,7 @@
         hash = opts.hashPrefix + pageObject.name + '/' + pageParams;
       }
 
-      if(currentPageObject.async) {
+      if(!opts.useHash || currentPageObject.async) {
         callClose(currentPage, pageObject.name, hash);
       } else {
         if(window.location.hash.indexOf(hash) === -1 && opts.useHash) {

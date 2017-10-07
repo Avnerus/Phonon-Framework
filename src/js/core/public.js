@@ -39,11 +39,9 @@
 	*/
 	phonon.updateLocale = function(locale) {
 
-		var riotEnabled = (typeof riot !== 'undefined' ? true : false);
-
 		phonon.i18n().setPreference(locale).getAll(function(json) {
 
-			if(riotEnabled) {
+			if(opts.riotEnabled) {
 
 				var virtualDom = phonon.tagManager.getAll();
 				var i = virtualDom.length - 1;
@@ -52,7 +50,7 @@
 				}
 
 				// Global update
-				riot.update();
+				opts.riot.update();
 
 			} else {
 				phonon.i18n().bind();

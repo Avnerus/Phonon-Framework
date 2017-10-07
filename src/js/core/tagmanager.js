@@ -1,9 +1,5 @@
 phonon.tagManager = (function () {
 
-	if(typeof riot === 'undefined') {
-		return;
-	}
-
 	var tags = [];
 
 	var addTag = function(tag, name) {

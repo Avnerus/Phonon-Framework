@@ -1730,11 +1730,6 @@ phonon.event = (function ($) {
 
 phonon.tagManager = (function () {
 
-    /*
-	if(typeof riot === 'undefined') {
-		return;
-	}*/
-
 	var tags = [];
 
 	var addTag = function(tag, name) {
@@ -1768,6 +1763,7 @@ phonon.tagManager = (function () {
 	};
 
 })();
+
 	// init
 	phonon.options = function(options) {
 		var useI18n = false;
@@ -1808,8 +1804,6 @@ phonon.tagManager = (function () {
 	* @param {String} locale
 	*/
 	phonon.updateLocale = function(locale) {
-
-		//var riotEnabled = (typeof riot !== 'undefined' ? true : false);
 
 		phonon.i18n().setPreference(locale).getAll(function(json) {
 
@@ -2206,8 +2200,6 @@ phonon.tagManager = (function () {
 
   var forward = true;
   var safeLink = false;
-
-  //var riotEnabled = (riot === undefined ? false : true);
 
   var opts = {
     defaultPage: null,
@@ -3373,7 +3365,7 @@ phonon.tagManager = (function () {
 	 */
 	function show(defaultTarget, accordionContent) {
 
-    accordionContent.style.display="block";
+	    accordionContent.style.display="block";
 		var height = accordionContent.offsetHeight;
 		accordionContent.style.maxHeight = '0px';
 
@@ -3409,7 +3401,7 @@ phonon.tagManager = (function () {
 
 		var onHide = function() {
 
-      accordionContent.style.display="none";
+		    accordionContent.style.display="none";
 			accordionContent.classList.remove('accordion-active');
 			accordionContent.style.maxHeight = 'none';
 
